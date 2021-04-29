@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS vprole;
 */
 CREATE TABLE vprole (
 	"role" TEXT NOT NULL PRIMARY KEY,
-	"releAbbrev" TEXT,
+	"roleAbbrev" TEXT,
 	"roleDesc" TEXT
 );
 INSERT INTO vprole ("role", "roleAbbrev", "roleDesc") VALUES
