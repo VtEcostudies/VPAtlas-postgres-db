@@ -18,12 +18,14 @@ DROP VIEW "geojson_visits";
 SELECT UpdateGeometrySRID('vpmapped','poolLocation',4326); --this amounts to ALTER TABLE ALTER COLUMN...
 */
 
+/*
 --geo_town test query
 select "mappedPoolId", "mappedPoolLocation"
 from vpmapped
 inner join geo_town ON ST_WITHIN("mappedPoolLocation", "geoTownPolygon")
 inner join vptown ON "mappedTownId"="geoTownId"
 WHERE "townName" IN ('Strafford', 'Norwich');
+*/
 
 --fill all vpmapped mappedTownIds from PostGIS towns!
 update vpmapped
@@ -64,8 +66,8 @@ $BODY$;
 ALTER FUNCTION set_geometry_townid_from_pool_lat_lon()
     OWNER TO vpatlas;
 
-DROP TRIGGER trigger_set_pool_locinfo_after_insert_vpmapped ON vpmapped;
-DROP TRIGGER trigger_set_pool_locinfo_before_insert_vpmapped ON vpmapped;
+DROP TRIGGER IF EXISTS trigger_set_pool_locinfo_after_insert_vpmapped ON vpmapped;
+DROP TRIGGER IF EXISTS trigger_set_pool_locinfo_before_insert_vpmapped ON vpmapped;
 --create trigger on vpmapped to set mappedPoolLocation, mappedTownId from lat/lon on insert
 CREATE TRIGGER trigger_set_pool_locinfo_before_insert_vpmapped
     BEFORE INSERT
@@ -73,8 +75,8 @@ CREATE TRIGGER trigger_set_pool_locinfo_before_insert_vpmapped
     FOR EACH ROW
     EXECUTE PROCEDURE set_geometry_townid_from_pool_lat_lon();
 
-DROP TRIGGER trigger_set_pool_locinfo_after_update_vpmapped ON vpmapped;
-DROP TRIGGER trigger_set_pool_locinfo_before_update_vpmapped ON vpmapped;
+DROP TRIGGER IF EXISTS trigger_set_pool_locinfo_after_update_vpmapped ON vpmapped;
+DROP TRIGGER IF EXISTS trigger_set_pool_locinfo_before_update_vpmapped ON vpmapped;
 --create trigger on vpmapped to set mappedPoolLocation, mappedTownId from lat/lon on update
 CREATE TRIGGER trigger_set_pool_locinfo_before_update_vpmapped
     BEFORE UPDATE
@@ -111,7 +113,7 @@ $BODY$;
 ALTER FUNCTION set_mapped_pool_location_from_visit_lat_lon()
     OWNER TO vpatlas;
 
---DROP TRIGGER trigger_set_mapped_pool_location_after_update_vpvisit ON vpvisit;
+DROP TRIGGER IF EXISTS trigger_set_mapped_pool_location_after_update_vpvisit ON vpvisit;
 --create trigger on vpvisit to set mappedPoolLocation from visit lat/lon on visit update
 CREATE TRIGGER trigger_set_mapped_pool_location_after_update_vpvisit
     AFTER UPDATE

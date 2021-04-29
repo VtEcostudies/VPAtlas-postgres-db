@@ -75,14 +75,16 @@ DROP TRIGGER IF EXISTS trigger_before_update_set_mapped_user_id_from_mapped_by_u
 CREATE TRIGGER trigger_before_update_set_mapped_user_id_from_mapped_by_user BEFORE UPDATE ON vpmapped
   FOR EACH ROW EXECUTE PROCEDURE set_mapped_user_id_from_mapped_by_user();
 
-SELECT * FROM vpmapped WHERE "mappedByUser" LIKE '%SDF%' AND "mappedByUser" != 'SDF';
+--SELECT * FROM vpmapped WHERE "mappedByUser" LIKE '%SDF%' AND "mappedByUser" != 'SDF';
 
 INSERT INTO vpuser_alias ("alias", "aliasUserId") VALUES
 ('SDF', (SELECT id from vpuser WHERE email='sfaccio@vtecostudies.org')),
 ('sfaccio', (SELECT id from vpuser WHERE email='sfaccio@vtecostudies.org'));
 
+--this will trigger adding userIds for all names given aliases above
 UPDATE vpmapped SET "mappedByUser"="mappedByUser"; --WHERE "mappedPoolId"='SDF100';
 
+/*
 --test query
 SELECT "id" FROM vpuser
 INNER JOIN vpuser_alias ON "aliasUserId"="id"
@@ -92,3 +94,4 @@ OR "alias"='SDF';
 select "mappedPoolId", "mappedByUser", id, username, email from vpmapped
 inner join vpuser ON "mappedUserId"=id
 WHERE id != 0 ;
+*/

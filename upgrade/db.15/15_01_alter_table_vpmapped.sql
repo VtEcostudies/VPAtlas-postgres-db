@@ -1,13 +1,5 @@
 
---ALTER TABLE vpmapped ADD COLUMN "mappedPoolStatus" POOLSTATUS DEFAULT 'Potential';
 ALTER TABLE vpmapped ALTER COLUMN "mappedPoolStatus" SET DEFAULT 'Potential';
-
---populate vpmapped geometry with currently-known mapped pool data
-UPDATE vpmapped SET
-"mappedPoolStatus" = "poolStatus"
-FROM vpknown
-WHERE "poolId"="mappedPoolId";
-
 ALTER TABLE vpmapped ALTER COLUMN "mappedPoolLocation" TYPE GEOMETRY(Geometry, 4326);
 ALTER TABLE vpmapped ALTER COLUMN "mappedPoolBorder" TYPE GEOMETRY(Geometry, 4326);
 
@@ -28,6 +20,7 @@ AND "visitId" IN (
 );
 
 --Test query to show that MAX("visitId") Grouped By "visitPoolId" gets the latest visit to a pool
+/*
 SELECT "cntVisitId","maxVisitId","visitId","visitPoolId"
 FROM vpvisit LEFT JOIN (
 	SELECT MAX("visitId") AS "maxVisitId", COUNT("visitId") AS "cntVisitId"
@@ -36,6 +29,7 @@ FROM vpvisit LEFT JOIN (
 ) as max
 ON vpvisit."visitId"="maxVisitId"
 ORDER BY "visitPoolId";
+*/
 
 --somehow, updatedAt trigger was missing from vpmapped?
 CREATE TRIGGER trigger_updated_at
@@ -45,8 +39,8 @@ CREATE TRIGGER trigger_updated_at
     EXECUTE PROCEDURE public.set_updated_at();
 
 --fix a bug in create mapped pool where mappedMethod is incorrect
-select * from vpmapped where "mappedMethod"='Visited';
-update vpmapped set "mappedMethod"='Visit' where "mappedMethod"='Visited';
+--select * from vpmapped where "mappedMethod"='Visited';
+UPDATE vpmapped SET "mappedMethod"='Visit' WHERE "mappedMethod"='Visited';
 
 --create a data type for mappedMethod to avoid future problems
 CREATE TYPE vp_mapped_method AS ENUM ('Aerial', 'Known', 'Visit');
