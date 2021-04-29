@@ -4,11 +4,10 @@ ALTER TABLE vpcounty DROP COLUMN "countyBorder";
 create table vpstate (
 	"stateId" SERIAL,
 	"stateName" TEXT NOT NULL,
-	CONSTRAINT state_pkey PRIMARY KEY ("stateId"),
+	CONSTRAINT state_pkey PRIMARY KEY ("stateId")
 );
 INSERT INTO vpstate ("stateId", "stateName")
-VALUES
-(1, 'Vermont');
+VALUES (1, 'Vermont');
 
 --DROP TABLE geo_state;
 create table geo_state (
@@ -16,7 +15,7 @@ create table geo_state (
 	"geoPolygon" geometry(Geometry, 4326),
 	CONSTRAINT geo_state_pkey PRIMARY KEY ("geoId"),
 	CONSTRAINT fk_geo_state_id FOREIGN KEY ("geoId") REFERENCES vpstate ("stateId")
-)
+);
 --TRUNCATE TABLE geo_state;
 
 --DROP TABLE geo_town;
@@ -52,7 +51,7 @@ create table geo_biophysical (
 	"geoPolygon" geometry(Geometry, 4326),
 	CONSTRAINT geo_biophysical_pkey PRIMARY KEY ("geoId"),
 	CONSTRAINT fk_geo_biophysical_id FOREIGN KEY ("geoId") REFERENCES vpbiophysical ("biophysicalId")
-)
+);
 --TRUNCATE TABLE geo_biophysical;
 
 SELECT 'NOW YOU NEED TO LOAD GEO-DATA USING THE API. SEE C:\Users\jloomis\Documents\VCE\VPAtlas\vpAtlas-node-api\vcgiMapData\vcgi_load.js'

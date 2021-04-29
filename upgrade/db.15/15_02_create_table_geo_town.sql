@@ -4,7 +4,7 @@ create table geo_town (
 	"geoTownPolygon" geometry(Geometry, 4326),
 	CONSTRAINT geo_town_pkey PRIMARY KEY ("geoTownId"),
 	CONSTRAINT fk_geo_town_id FOREIGN KEY ("geoTownId") REFERENCES vptown ("townId")
-)
+);
 
 --TRUNCATE TABLE geo_town;
 

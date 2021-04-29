@@ -8,7 +8,7 @@ UPDATE vpmapped SET
 	"mappedPoolLocation" = ST_GeomFromText('POINT(' || "mappedLongitude" || ' ' || "mappedLatitude" || ')');
 
 --Update vpmapped geolocation with the most recent visit data
-UPDATE vpmappped SET
+UPDATE vpmapped SET
 	"mappedpoolLocation" = ST_GeomFromText('POINT(' || "visitLongitude" || ' ' || "visitLatitude" || ')')
 FROM vpvisit
 WHERE "mappedPoolId"="visitPoolId"
