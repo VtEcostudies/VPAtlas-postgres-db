@@ -30,7 +30,7 @@ create table geo_county (
 create table vpbiophysical (
 	"biophysicalId" SERIAL,
 	"biophysicalName" TEXT NOT NULL,
-	CONSTRAINT biophysical_pkey PRIMARY KEY ("biophysicalId"),
+	CONSTRAINT biophysical_pkey PRIMARY KEY ("biophysicalId")
 );
 INSERT INTO vpbiophysical ("biophysicalId", "biophysicalName")
 VALUES
