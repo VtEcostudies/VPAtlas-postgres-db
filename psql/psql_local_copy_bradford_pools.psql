@@ -1,0 +1,3 @@
+\copy (select * from vpvisit inner join vpmapped on "mappedPoolId"="visitPoolId" inner join vptown on "visitTow
+nId"="townId" where "townName"='Bradford' and "mappedPoolStatus" not in ('Eliminated', 'Duplicate')) to 'C:\Users\jloomis
+\Documents\VCE\VPAtlas\vpAtlas-postgres-db\export\vpatlas_pools_bradford.csv' csv header
