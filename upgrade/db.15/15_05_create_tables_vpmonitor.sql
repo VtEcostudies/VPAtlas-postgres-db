@@ -113,7 +113,7 @@ INSERT INTO def_survey_equipment(
 create table vpsurvey (
 	"surveyId" SERIAL UNIQUE NOT NULL PRIMARY KEY,
 	"surveyGlobalId" uuid,
-	"surveyPoolId" TEXT NOT NULL REFERENCES vpmapped("mappedPoolId"),
+	"surveyPoolId" TEXT NOT NULL REFERENCES vpmapped("mappedPoolId") ON DELETE CASCADE,
 	"surveyTypeId" INTEGER NOT NULL REFERENCES def_survey_type("surveyTypeId"),
 	"surveyUserEmail" TEXT NOT NULL, --DO NOT apply reference to email to allow user emails to change
 	"surveyUserId" INTEGER REFERENCES vpuser(id), --see TRIGGER FUNCTION set_survey_user_id_from_survey_user_email()
@@ -167,7 +167,7 @@ ALTER TABLE vpsurvey ADD CONSTRAINT "vpsurvey_unique_surveyPoolId_surveyTypeId_s
 */
 CREATE TABLE vpsurvey_year (
 	"surveyYear" INTEGER NOT NULL,
-	"surveyYearSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId")
+	"surveyYearSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId") ON DELETE CASCADE
 );
 
 /*
@@ -186,7 +186,7 @@ CREATE TABLE vpsurvey_equipment_status (
 );
 
 CREATE TABLE vpsurvey_amphib (
-	"surveyAmphibSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId"),
+	"surveyAmphibSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId") ON DELETE CASCADE,
 	"surveyAmphibObsEmail" TEXT NOT NULL, --do not reference vpuser("email") to allow users to change emails
 	"surveyAmphibObsId" INTEGER REFERENCES vpuser(id), --db TRIGGER sets this from email on insert/update
 	"surveyAmphibPolarizedGlasses" BOOLEAN DEFAULT false,
@@ -211,7 +211,7 @@ ALTER TABLE vpsurvey_amphib ADD CONSTRAINT "vpsurvey_amphib_unique_surveyId_obse
 	UNIQUE("surveyAmphibSurveyId","surveyAmphibObsEmail");
 
 CREATE TABLE vpsurvey_macro (
-	"surveyMacroSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId"),
+	"surveyMacroSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId") ON DELETE CASCADE,
 	--"surveyMacroObsEmail" TEXT NOT NULL, --do not reference vpuser("email") to allow users to change emails
 	--"surveyMacroObsId" INTEGER REFERENCES vpuser(id), --db TRIGGER sets this from email on insert/update
 	"surveyMacroNorthFASH" INTEGER,
@@ -439,7 +439,7 @@ BEGIN
 	RAISE NOTICE 'surveyMacroJson: %', macroJson;
 	RAISE NOTICE 'surveyAmphibJson.1: %', amphibJson->'1';
 	RAISE NOTICE 'surveyAmphibJson.2: %', amphibJson->'2';
-	DELETE FROM vpsurvey_photos WHERE "surveyYearSurveyId"=NEW."surveyId";
+	DELETE FROM vpsurvey_photos WHERE "surveyPhotoSurveyId"=NEW."surveyId";
 	DELETE FROM vpsurvey_year WHERE "surveyYearSurveyId"=NEW."surveyId";
 	DELETE FROM vpsurvey_amphib WHERE "surveyAmphibSurveyId"=NEW."surveyId";
 	DELETE FROM vpsurvey_macro WHERE "surveyMacroSurveyId"=NEW."surveyId";
