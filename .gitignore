@@ -1,5 +1,6 @@
 credentials.csv
 *.backup
 *.restore
-restore/*
-backup/*
+restore/
+backup/
+import/

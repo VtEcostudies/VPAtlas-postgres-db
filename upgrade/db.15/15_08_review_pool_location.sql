@@ -1,4 +1,6 @@
 ALTER TABLE vpreview ADD COLUMN IF NOT EXISTS "reviewPoolLocator" BOOLEAN;
+ALTER TABLE vpreview ADD CONSTRAINT vpreview_unique_pool_id_pool_locator
+  UNIQUE ("reviewPoolId", "reviewPoolLocator");
 
 --DROP FUNCTION IF EXISTS set_vpmapped_geolocation_from_vpvisit_coordinates();
 CREATE OR REPLACE FUNCTION set_vpmapped_geolocation_from_vpvisit_coordinates()
@@ -14,6 +16,9 @@ BEGIN
 			NEW."reviewId", NEW."reviewVisitId", NEW."reviewPoolId", visit."visitLatitude", visit."visitLongitude";
 		UPDATE vpmapped SET "mappedPoolLocation" = ST_GEOMFROMTEXT('POINT(' || visit."visitLongitude" || ' ' ||  visit."visitLatitude" || ')', 4326)
 			WHERE "mappedPoolId"=NEW."reviewPoolId";
+    --Only allow a single Visit's Review's Pool Locator flag to be set at once (a pseudo-uniqueness constraint)
+    UPDATE vpreview SET "reviewPoolLocator"=false
+      WHERE "reviewPoolId"=NEW."reviewPoolId" AND "reviewVisitId"!=NEW."reviewVisitId"
 	END IF;
 	RETURN NEW;
 END;
