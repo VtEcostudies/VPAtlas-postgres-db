@@ -5,7 +5,7 @@
 */
 CREATE TABLE vpuser_alias (
 	"alias" TEXT NOT NULL UNIQUE PRIMARY KEY,
-	"aliasUserId" INTEGER NOT NULL REFERENCES vpuser("id")
+	"aliasUserId" INTEGER NOT NULL REFERENCES vpuser("id") ON DELETE CASCADE
 );
 
 ALTER TABLE vpmapped RENAME COLUMN "mappedByUserId" TO "mappedUserId";
@@ -25,12 +25,13 @@ DECLARE
 BEGIN
 	DELETE FROM vpuser_alias WHERE "aliasUserId"=NEW."id";
 	RAISE NOTICE 'Alias Array %', NEW."alias";
-	FOR i IN array_lower(NEW.alias, 1) .. array_upper(NEW.alias, 1)
-	LOOP
-		RAISE NOTICE 'alias: %', NEW.alias[i];
-		INSERT INTO vpuser_alias ("aliasUserId", "alias") VALUES (NEW."id", NEW.alias[i]);
-	END LOOP;
-
+	IF array_length(NEW.alias::TEXT[], 1) IS NOT NULL THEN
+		FOR i IN array_lower(NEW.alias, 1) .. array_upper(NEW.alias, 1)
+		LOOP
+			RAISE NOTICE 'alias: %', NEW.alias[i];
+			INSERT INTO vpuser_alias ("aliasUserId", "alias") VALUES (NEW."id", NEW.alias[i]);
+		END LOOP;
+	END IF;
 	RETURN NEW;
 END;
 $BODY$;
