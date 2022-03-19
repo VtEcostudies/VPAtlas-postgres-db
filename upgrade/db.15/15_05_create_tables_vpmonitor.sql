@@ -247,16 +247,21 @@ INSERT INTO def_survey_species ("surveySpeciesAbbrev", "surveySpeciesCommon", "s
 ('BLSA','Blue-spotted Salamander','Ambystoma laterale'),
 ('FASH','FairyShrimp','Eubranchipus bundyi'),
 ('CDFY','Caddisfly','Trichoptera'),
-('POOL','Vernal Pool','Poolus vernale');
+('POOL','Vernal Pool','Poolus vernale'),
+('UNKNOWN','Unknown Species','Speciei incognitus');
 
 /*
-  Join table for survey photos by user and species
+  Join table for survey photos by surveyId and species
 */
 CREATE TABLE vpsurvey_photos (
   "surveyPhotoSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId"),
   "surveyPhotoSpecies" TEXT NOT NULL REFERENCES def_survey_species("surveySpeciesAbbrev"),
-  "surveyPhotoUrl" TEXT NOT NULL
+  "surveyPhotoUrl" TEXT NOT NULL,
+  "surveyPhotoName" TEXT;
 );
+
+ALTER TABLE vpsurvey_photos ADD CONSTRAINT "vpsurvey_photos_unique_surveyId_species_url"
+	UNIQUE("surveyPhotoSurveyId","surveyPhotoSpecies","surveyPhotoUrl");
 
 CREATE TRIGGER trigger_updated_at BEFORE UPDATE ON vpsurvey
   FOR EACH ROW EXECUTE PROCEDURE set_updated_at();
