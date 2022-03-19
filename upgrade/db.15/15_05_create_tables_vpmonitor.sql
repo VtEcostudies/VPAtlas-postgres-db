@@ -169,6 +169,7 @@ CREATE TABLE vpsurvey_year (
 	"surveyYear" INTEGER NOT NULL,
 	"surveyYearSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId") ON DELETE CASCADE
 );
+ALTER TABLE vpsurvey_year ADD CONSTRAINT "vpsurvey_year_unique_surveyId_surveyYear" UNIQUE("surveyYearSurveyId", "surveyYear");
 
 /*
 	Join table for vernal pool monitoring equipment status at surveys.
@@ -337,16 +338,21 @@ BEGIN
 		INSERT INTO vpsurvey_photos (
 		"surveyPhotoSurveyId",
 		"surveyPhotoSpecies",
-		"surveyPhotoUrl"
+		"surveyPhotoUrl",
+		"surveyPhotoName"
 		)
 		VALUES (
 		NEW."surveyId",
 		(photoJson->>'surveyPhotoSpecies')::TEXT,
-		(photoJson->>'surveyPhotoUrl')::TEXT);
+		(photoJson->>'surveyPhotoUrl')::TEXT,
+		(photoJson->>'surveyPhotoName')::TEXT);
 	END IF;
 	IF yearJson->>'surveyYear' IS NOT NULL THEN
 		INSERT INTO vpsurvey_year ("surveyYearSurveyId", "surveyYear")
 			VALUES (NEW."surveyId", (yearJson->>'surveyYear')::INTEGER);
+	ELSE
+		INSERT INTO vpsurvey_year ("surveyYearSurveyId", "surveyYear")
+			VALUES (NEW."surveyId", EXTRACT(YEAR FROM NEW."surveyDate"));
 	END IF;
 	IF macroJson != '{}' THEN
 		INSERT INTO vpsurvey_macro (
