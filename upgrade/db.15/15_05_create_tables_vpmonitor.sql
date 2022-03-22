@@ -288,11 +288,11 @@ CREATE TABLE vpsurvey_uploads (
 );
 
 --REMOVE foreign key constraint on survey email. This allows users' emails to change.
---To handle this, we use column surveyUserId and a TRIGGER to set is value from matching email in vpuser.
+--To handle this, we use column surveyUserId and a TRIGGER to set its value from matching email in vpuser.
 ALTER TABLE vpsurvey DROP CONSTRAINT IF EXISTS "vpsurvey_surveyUserEmail_fkey";
 
 --Now create a function and triggers to convert surveyUserEmail into surveyUserId
-DROP FUNCTION IF EXISTS set_survey_user_id_from_survey_user_email();
+--DROP FUNCTION IF EXISTS set_survey_user_id_from_survey_user_email();
 CREATE OR REPLACE FUNCTION set_survey_user_id_from_survey_user_email()
     RETURNS trigger
 		LANGUAGE 'plpgsql'
@@ -315,31 +315,6 @@ CREATE TRIGGER trigger_before_update_set_survey_user_id_from_survey_user_email B
   FOR EACH ROW EXECUTE PROCEDURE set_survey_user_id_from_survey_user_email();
 
 UPDATE vpsurvey SET "surveyUserEmail"="surveyUserEmail"; --this bumps the BEFORE UPDATE TRIGGER above
-
---Now create a function and triggers to convers surveyAmphibObsEmail into surveyAmphibObsId
-DROP FUNCTION IF EXISTS set_survey_user_amphib_id_from_survey_amphib_obs_email();
-CREATE OR REPLACE FUNCTION set_survey_user_amphib_id_from_survey_amphib_obs_email()
-    RETURNS trigger
-		LANGUAGE 'plpgsql'
-AS $BODY$
-BEGIN
-	NEW."surveyAmphibObsId" = (SELECT "id" FROM vpuser WHERE "email"=NEW."surveyAmphibObsEmail");
-	RAISE NOTICE 'set_survey_user_amphib_id_from_survey_amphib_obs_email() email:% | userId:%', NEW."surveyAmphibObsEmail", NEW."surveyAmphibObsId";
-	RETURN NEW;
-END;
-$BODY$;
-
-ALTER FUNCTION set_survey_user_amphib_id_from_survey_amphib_obs_email()
-    OWNER TO vpatlas;
-
-DROP TRIGGER IF EXISTS trigger_before_insert_set_survey_user_amphib_id_from_survey_amphib_obs_email ON vpsurvey_amphib;
-CREATE TRIGGER trigger_before_insert_set_survey_user_amphib_id_from_survey_amphib_obs_email BEFORE INSERT ON vpsurvey_amphib
-  FOR EACH ROW EXECUTE PROCEDURE set_survey_user_amphib_id_from_survey_amphib_obs_email();
-DROP TRIGGER IF EXISTS trigger_before_update_set_survey_user_amphib_id_from_survey_amphib_obs_email ON vpsurvey_amphib;
-CREATE TRIGGER trigger_before_update_set_survey_user_amphib_id_from_survey_amphib_obs_email BEFORE UPDATE ON vpsurvey_amphib
-  FOR EACH ROW EXECUTE PROCEDURE set_survey_user_amphib_id_from_survey_amphib_obs_email();
-
-UPDATE vpsurvey_amphib SET "surveyAmphibObsEmail"="surveyAmphibObsEmail"; --this bumps the BEFORE UPDATE TRIGGER above
 
 --DROP FUNCTION IF EXISTS insert_vpsurvey_subtables_from_vpsurvey_jsonb();
 CREATE OR REPLACE FUNCTION insert_vpsurvey_subtables_from_vpsurvey_jsonb()

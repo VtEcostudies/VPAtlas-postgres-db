@@ -1,12 +1,27 @@
--- FUNCTION: public.set_mapped_pool_location_from_visit_lat_lon()
+--These changes are of unknown origin. It appears that we did not create numbered
+--upgrade sql files for some of the required changes in the last development round.
+--These are added here with unkonwn consequences.
+ALTER TABLE vpvisit DROP COLUMN "visitTownName";
+ALTER TABLE vpvisit DROP COLUMN "visitIdLegacy";
 
--- DROP FUNCTION IF EXISTS public.set_mapped_pool_location_from_visit_lat_lon();
+ALTER TABLE vpvisit drop constraint fk_pool_id;
+ALTER TABLE vpvisit drop constraint fk_user_id;
+ALTER TABLE vpvisit add constraint fk_vpvisit_vptown_id foreign key ("visitTownId") references vptown("townId");
+ALTER TABLE vpvisit drop constraint fk_town_id;
 
+--get visit Dupes for visitPoolId, visitDate and visitUserName
+select "visitPoolId", "visitDate", "visitUserName", count(*)
+from vpvisit
+group by "visitPoolId", "visitDate", "visitUserName"
+having count(*) > 1; --1 MLS566
+
+ALTER TABLE vpvisit ADD CONSTRAINT "vpVisit_unique_visitPoolId_visitDate_visitUserName"
+  UNIQUE("visitPoolId", "visitDate", "visitUserName");
+
+-- DROP FUNCTION IF EXISTS set_mapped_pool_location_from_visit_lat_lon();
 CREATE OR REPLACE FUNCTION set_mapped_pool_location_from_visit_lat_lon()
     RETURNS trigger
     LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE NOT LEAKPROOF
 AS $BODY$
 DECLARE
    method text := '';
@@ -30,6 +45,18 @@ $BODY$;
 ALTER FUNCTION set_mapped_pool_location_from_visit_lat_lon()
     OWNER TO vpatlas;
 
+DROP TRIGGER IF EXISTS trigger_set_mapped_pool_location_after_update_vpvisit ON vpvisit;
+CREATE TRIGGER trigger_set_mapped_pool_location_after_update_vpvisit
+    AFTER UPDATE
+    ON vpvisit
+    FOR EACH ROW
+    EXECUTE FUNCTION set_mapped_pool_location_from_visit_lat_lon();
+
+--ALTER TABLE vpreview ADD CONSTRAINT vpreview_unique_pool_id_pool_locator UNIQUE ("reviewPoolId", "reviewPoolLocator");
+--Don't do it the above way, yet. Let's just set all others to false on trigger
+--in function, below, when a new review set the reviewPoolLocator flag.
+--ALTER TABLE vpreview DROP CONSTRAINT vpreview_unique_pool_id_pool_locator;
+--DROP FUNCTION IF EXISTS set_vpmapped_geolocation_from_vpvisit_coordinates();
 CREATE OR REPLACE FUNCTION set_vpmapped_geolocation_from_vpvisit_coordinates()
     RETURNS trigger
 		LANGUAGE 'plpgsql'
@@ -50,3 +77,20 @@ BEGIN
 	RETURN NEW;
 END;
 $BODY$;
+
+ALTER FUNCTION set_vpmapped_geolocation_from_vpvisit_coordinates()
+    OWNER TO vpatlas;
+
+DROP TRIGGER IF EXISTS trigger_after_insert_set_vpmapped_pool_location ON vpreview;
+CREATE TRIGGER trigger_after_insert_set_vpmapped_pool_location
+    AFTER INSERT
+    ON vpreview
+    FOR EACH ROW
+    EXECUTE FUNCTION set_vpmapped_geolocation_from_vpvisit_coordinates();
+
+DROP TRIGGER IF EXISTS trigger_after_update_set_vpmapped_pool_location ON vpreview;
+CREATE TRIGGER trigger_after_update_set_vpmapped_pool_location
+    AFTER UPDATE
+    ON vpreview
+    FOR EACH ROW
+    EXECUTE FUNCTION set_vpmapped_geolocation_from_vpvisit_coordinates();
