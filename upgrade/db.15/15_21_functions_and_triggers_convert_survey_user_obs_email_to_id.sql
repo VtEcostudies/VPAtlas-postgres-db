@@ -57,7 +57,7 @@ BEGIN
 	IF u_id IS NULL AND e_mail IS NOT NULL THEN --user NOT found with incoming email/username. create user.
 		u_name := SPLIT_PART(e_mail, '@', 1);
 		f_name := SPLIT_PART(e_mail, '@', 1);
-		l_name := SPLIT_PART(e_mail, '@', 2);
+		l_name := SPLIT_PART(e_mail, '@', 1);
 		INSERT INTO vpuser (
 			"username", "firstname", "lastname", "middleName", "email", "hash", "userrole"
 		) VALUES (
