@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS vpsensitive_data
     "sensitiveDataColumn" text NOT NULL,
     "sensitiveDataDesc" text,
     CONSTRAINT fk_mapped_pool_id FOREIGN KEY ("sensitivePoolId")
-  		REFERENCES public.vpmapped ("mappedPoolId") MATCH SIMPLE
+  		REFERENCES vpmapped ("mappedPoolId") MATCH SIMPLE
   		ON UPDATE NO ACTION
-  		ON DELETE NO ACTION
+  		ON DELETE CASCADE
 )
