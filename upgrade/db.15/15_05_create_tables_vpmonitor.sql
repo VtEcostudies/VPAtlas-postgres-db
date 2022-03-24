@@ -258,7 +258,7 @@ CREATE TABLE vpsurvey_photos (
   "surveyPhotoSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId"),
   "surveyPhotoSpecies" TEXT NOT NULL REFERENCES def_survey_species("surveySpeciesAbbrev"),
   "surveyPhotoUrl" TEXT NOT NULL,
-  "surveyPhotoName" TEXT;
+  "surveyPhotoName" TEXT
 );
 
 ALTER TABLE vpsurvey_photos ADD CONSTRAINT "vpsurvey_photos_unique_surveyId_species_url"
