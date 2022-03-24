@@ -1,7 +1,12 @@
 ALTER TABLE vpreview ADD COLUMN IF NOT EXISTS "reviewPoolLocator" BOOLEAN;
-ALTER TABLE vpreview DROP CONSTRAINT IF EXISTS vpreview_unique_pool_id_pool_locator; 
+ALTER TABLE vpreview DROP CONSTRAINT IF EXISTS vpreview_unique_pool_id_pool_locator;
 ALTER TABLE vpreview ADD CONSTRAINT vpreview_unique_pool_id_pool_locator
   UNIQUE ("reviewPoolId", "reviewPoolLocator");
+
+--ALTER TABLE vpreview ADD CONSTRAINT vpreview_unique_pool_id_pool_locator UNIQUE ("reviewPoolId", "reviewPoolLocator");
+--Don't do it the above way, yet. Let's just set all others to false on trigger
+--in function, below, when a new review set the reviewPoolLocator flag.
+--ALTER TABLE vpreview DROP CONSTRAINT vpreview_unique_pool_id_pool_locator;
 
 --DROP FUNCTION IF EXISTS set_vpmapped_geolocation_from_vpvisit_coordinates();
 CREATE OR REPLACE FUNCTION set_vpmapped_geolocation_from_vpvisit_coordinates()
