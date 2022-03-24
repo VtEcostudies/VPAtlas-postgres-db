@@ -1,5 +1,5 @@
 ALTER TABLE vpreview ADD COLUMN IF NOT EXISTS "reviewPoolLocator" BOOLEAN;
-DROP CONSTRAINT IF EXISTS vpreview_unique_pool_id_pool_locator; 
+ALTER TABLE vpreview DROP CONSTRAINT IF EXISTS vpreview_unique_pool_id_pool_locator; 
 ALTER TABLE vpreview ADD CONSTRAINT vpreview_unique_pool_id_pool_locator
   UNIQUE ("reviewPoolId", "reviewPoolLocator");
 
