@@ -113,7 +113,7 @@ INSERT INTO def_survey_equipment(
 create table vpsurvey (
 	"surveyId" SERIAL UNIQUE NOT NULL PRIMARY KEY,
 	"surveyGlobalId" uuid,
-	"surveyPoolId" TEXT NOT NULL REFERENCES vpmapped("mappedPoolId") ON DELETE CASCADE,
+	"surveyPoolId" TEXT NOT NULL REFERENCES vpmapped("mappedPoolId"),
 	"surveyTypeId" INTEGER NOT NULL REFERENCES def_survey_type("surveyTypeId"),
 	"surveyUserEmail" TEXT NOT NULL, --DO NOT apply reference to email to allow user emails to change
 	"surveyUserId" INTEGER REFERENCES vpuser(id), --see TRIGGER FUNCTION set_survey_user_id_from_survey_user_email()
@@ -187,7 +187,7 @@ CREATE TABLE vpsurvey_equipment_status (
 );
 
 CREATE TABLE vpsurvey_amphib (
-	"surveyAmphibSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId") ON DELETE CASCADE,
+		"surveyAmphibSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId") ON DELETE CASCADE,
 	"surveyAmphibObsEmail" TEXT NOT NULL, --do not reference vpuser("email") to allow users to change emails
 	"surveyAmphibObsId" INTEGER REFERENCES vpuser(id), --db TRIGGER sets this from email on insert/update
 	"surveyAmphibPolarizedGlasses" BOOLEAN DEFAULT false,
@@ -255,7 +255,7 @@ INSERT INTO def_survey_species ("surveySpeciesAbbrev", "surveySpeciesCommon", "s
   Join table for survey photos by surveyId and species
 */
 CREATE TABLE vpsurvey_photos (
-  "surveyPhotoSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId"),
+  "surveyPhotoSurveyId" INTEGER NOT NULL REFERENCES vpsurvey("surveyId") ON DELETE CASCADE,
   "surveyPhotoSpecies" TEXT NOT NULL REFERENCES def_survey_species("surveySpeciesAbbrev"),
   "surveyPhotoUrl" TEXT NOT NULL,
   "surveyPhotoName" TEXT
