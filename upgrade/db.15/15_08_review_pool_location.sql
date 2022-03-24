@@ -1,4 +1,5 @@
 ALTER TABLE vpreview ADD COLUMN IF NOT EXISTS "reviewPoolLocator" BOOLEAN;
+DROP CONSTRAINT IF EXISTS vpreview_unique_pool_id_pool_locator; 
 ALTER TABLE vpreview ADD CONSTRAINT vpreview_unique_pool_id_pool_locator
   UNIQUE ("reviewPoolId", "reviewPoolLocator");
 
@@ -18,7 +19,7 @@ BEGIN
 			WHERE "mappedPoolId"=NEW."reviewPoolId";
     --Only allow a single Visit's Review's Pool Locator flag to be set at once (a pseudo-uniqueness constraint)
     UPDATE vpreview SET "reviewPoolLocator"=false
-      WHERE "reviewPoolId"=NEW."reviewPoolId" AND "reviewVisitId"!=NEW."reviewVisitId"
+      WHERE "reviewPoolId"=NEW."reviewPoolId" AND "reviewVisitId"!=NEW."reviewVisitId";
 	END IF;
 	RETURN NEW;
 END;
