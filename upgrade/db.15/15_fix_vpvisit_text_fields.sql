@@ -1,5 +1,5 @@
-ALTER TABLE vpvisit DROP COLUMN "visitTownName";
-ALTER TABLE vpvisit DROP COLUMN "visitIdLegacy";
+ALTER TABLE vpvisit DROP COLUMN IF EXISTS "visitTownName";
+ALTER TABLE vpvisit DROP COLUMN IF EXISTS "visitIdLegacy";
 
 SELECT "visitId",
 "visitLocationComments",

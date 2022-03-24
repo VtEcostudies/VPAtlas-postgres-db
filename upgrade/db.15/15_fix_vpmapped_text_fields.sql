@@ -1,4 +1,4 @@
-ALTER TABLE vpmapped DROP COLUMN "mappedDateUnixSeconds";
+ALTER TABLE vpmapped DROP COLUMN IF EXISTS "mappedDateUnixSeconds";
 
 SELECT "mappedPoolId",
 "mappedLandownerInfo",
