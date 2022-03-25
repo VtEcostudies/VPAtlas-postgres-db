@@ -1,6 +1,6 @@
 ALTER TABLE vpvisit DROP COLUMN IF EXISTS "visitTownName";
 ALTER TABLE vpvisit DROP COLUMN IF EXISTS "visitIdLegacy";
-
+/*
 SELECT "visitId",
 "visitLocationComments",
 "visitDirections",
@@ -28,6 +28,8 @@ from vpvisit where
 "visitFingerNailClamsNotes" like '%"%' OR
 "visitSpeciesOtherNotes" like '%"%' OR
 "visitWoodFrogNotes" like '%"%';
+*/
+ALTER TABLE vpvisit DISABLE TRIGGER ALL;
 
 UPDATE vpvisit SET
 "visitLocationComments" = replace("visitLocationComments", '"',''),
@@ -43,3 +45,5 @@ UPDATE vpvisit SET
 "visitFingerNailClamsNotes" = replace("visitFingerNailClamsNotes", '"',''),
 "visitSpeciesOtherNotes" = replace("visitSpeciesOtherNotes", '"',''),
 "visitWoodFrogNotes" = replace("visitWoodFrogNotes", '"','');
+
+ALTER TABLE vpvisit ENABLE TRIGGER ALL;
