@@ -6,6 +6,19 @@ create table geo_town (
 	CONSTRAINT fk_geo_town_id FOREIGN KEY ("geoTownId") REFERENCES vptown ("townId")
 );
 
+--NOTE: Somehow, on loading updates to vcgi town data, the SRID was changed on
+--the geo_town table. This made trigges not work, etc. Here's what I had to do
+--to fix it:
+-- Query the tables' SRID settings:
+SELECT Find_SRID('public', 'geo_town', 'geoTownPolygon');
+SELECT Find_SRID('public', 'vpmapped', 'mappedPoolLocation');
+--do the fix:
+ALTER TABLE geo_town
+  ALTER COLUMN "geoTownPolygon"
+    TYPE geometry(Geometry, 4326)
+    USING ST_SetSRID("geoTownPolygon", 4326);
+--test the fix:
+
 --TRUNCATE TABLE geo_town;
 
 --Views that prevent ALTER TABLE vpmapped must be dropped and re-added.
@@ -28,10 +41,12 @@ WHERE "townName" IN ('Strafford', 'Norwich');
 */
 
 --fill all vpmapped mappedTownIds from PostGIS towns!
-update vpmapped
-set "mappedTownId"="geoTownId"
-from geo_town
-where ST_WITHIN("mappedPoolLocation", "geoTownPolygon");
+ALTER TABLE vpmapped DISABLE TRIGGER ALL;
+UPDATE vpmapped
+SET "mappedTownId"="geoTownId"
+FROM geo_town
+WHERE ST_WITHIN("mappedPoolLocation", "geoTownPolygon");
+ALTER TABLE vpmapped ENABLE TRIGGER ALL;
 
 --create trigger function to set mappedPoolLocation, mappedTownId from lat/lon
 --we set mappedPoolLocation from lat/lon because the UI doesn't send PostGIS geometry

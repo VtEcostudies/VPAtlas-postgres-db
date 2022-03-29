@@ -151,6 +151,9 @@ create table vpsurvey (
 	"surveyMacroJson" jsonb,
 	"surveyYearJson" jsonb,
 	"surveyPhotoJson" jsonb,
+	"surveyGlobalId" uuid,
+	"surveyObjectId" INTEGER,
+	"surveyDataUrl" TEXT,
 	"createdAt" TIMESTAMP DEFAULT NOW(),
 	"updatedAt" TIMESTAMP DEFAULT NOW()
 );

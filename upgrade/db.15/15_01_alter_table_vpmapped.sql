@@ -4,8 +4,9 @@ ALTER TABLE vpmapped ALTER COLUMN "mappedPoolLocation" TYPE GEOMETRY(Geometry, 4
 ALTER TABLE vpmapped ALTER COLUMN "mappedPoolBorder" TYPE GEOMETRY(Geometry, 4326);
 
 --Update vpmapped geolocation with original mapped data
-UPDATE vpmapped SET
-	"mappedPoolLocation" = ST_GeomFromText('POINT(' || "mappedLongitude" || ' ' || "mappedLatitude" || ')');
+ALTER TABLE vpmapped DISABLE TRIGGER ALL;
+UPDATE vpmapped SET "mappedPoolLocation" = ST_GeomFromText('POINT(' || "mappedLongitude" || ' ' || "mappedLatitude" || ')');
+ALTER TABLE vpmapped ENABLE TRIGGER ALL;
 
 --Update vpmapped geolocation with the most recent visit data
 UPDATE vpmapped SET
