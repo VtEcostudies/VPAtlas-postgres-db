@@ -9,10 +9,22 @@ CREATE OR REPLACE FUNCTION insert_mapped_pool_from_visit_data()
 	LANGUAGE 'plpgsql'
 	AS $BODY$
 	DECLARE
-		extant text;
+		extant text; --poolId from vpmapped having
+		pools text[]; --array of existing poolIds
+		radius integer:=10; --locationUncertainty radius to look for extant pools by geometry
 	BEGIN
+		--NOTE: we expect the caller to have placed 'NEW*' in the field 'visitPoolId' if they
+		--expect to create a new pool. The query by poolId is still valid.
 		RAISE NOTICE 'insert_mapped_pool_from_visit_data() visitPoolId: %', NEW."visitPoolId";
 		SELECT "mappedPoolId" FROM vpmapped WHERE "mappedPoolId"=NEW."visitPoolId" INTO extant;
+		IF extant IS NULL THEN --poolId not found. Check for extant pools within radius of the incoming location.
+			IF NEW."visitLocationUncertainty"::INT THEN
+				radius := NEW."visitLocationUncertainty"::INT;
+			END IF;
+			SELECT vp_pools_at_point_within_radius(NEW."visitLatitude", NEW."visitLongitude", radius) INTO pools;
+			extant := pools[1]; --arrays are 1-based
+			NEW."visitPoolId" := extant;
+		END IF;
 		IF extant IS NULL THEN
 			INSERT INTO vpmapped (
 				"mappedPoolId",
@@ -22,6 +34,7 @@ CREATE OR REPLACE FUNCTION insert_mapped_pool_from_visit_data()
 				"mappedLatitude",
 				"mappedLongitude",
 				"mappedMethod",
+				"mappedLocationUncertainty",
 				"mappedObserverUserName",
 				"mappedPoolStatus")
 				VALUES (
@@ -32,10 +45,16 @@ CREATE OR REPLACE FUNCTION insert_mapped_pool_from_visit_data()
 				NEW."visitLatitude",
 				NEW."visitLongitude",
 				'Visit',
+				NEW."visitLocationUncertainty",
 				NEW."visitObserverUserName",
 				'Potential') RETURNING "mappedPoolId" INTO NEW."visitPoolId";
 		ELSE
-			RAISE NOTICE 'Unable to INSERT New Mapped Pool % - it already exists.', NEW."visitPoolId";
+			IF pools[1] IS NOT NULL THEN
+				RAISE NOTICE 'Unable to INSERT New Mapped Pool. Pool % is within % meters of (%, %).', 
+					NEW."visitPoolId", radius, NEW."visitLatitude", NEW."visitLongitude";
+			ELSE
+				RAISE NOTICE 'Unable to INSERT New Mapped Pool % - it already exists.', NEW."visitPoolId";
+			END IF;
 		END IF;
 		RETURN NEW;
 END;

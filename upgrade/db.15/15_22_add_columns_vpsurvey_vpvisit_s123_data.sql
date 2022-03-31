@@ -1,3 +1,4 @@
+
 -- add uuid and objectId columns to vpvisit for S123 uploads
 ALTER TABLE vpvisit ADD COLUMN IF NOT EXISTS "visitGlobalId" uuid;
 ALTER TABLE vpvisit ADD COLUMN IF NOT EXISTS "visitObjectId" INTEGER;
