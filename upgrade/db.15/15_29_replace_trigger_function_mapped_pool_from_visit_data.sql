@@ -23,7 +23,9 @@ CREATE OR REPLACE FUNCTION insert_mapped_pool_from_visit_data()
 			END IF;
 			SELECT vp_pools_at_point_within_radius(NEW."visitLatitude", NEW."visitLongitude", radius) INTO pools;
 			extant := pools[1]; --arrays are 1-based
-			NEW."visitPoolId" := extant;
+			IF extant IS NOT NULL THEN
+				NEW."visitPoolId" := extant;
+			END IF;
 		END IF;
 		IF extant IS NULL THEN
 			INSERT INTO vpmapped (
