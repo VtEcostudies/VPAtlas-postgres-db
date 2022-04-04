@@ -5,7 +5,13 @@
 --'set user id' trigger revealed them) and needed to fix those. In theory, those arose from incomplete trigger
 --code in this development system. However, here we remove visitGlobalId duplicates:
 
---DELETE FROM vpvisit WHERE "visitId" IN (
+SELECT "visitGlobalId", count(*)
+FROM vpvisit
+GROUP BY "visitGlobalId"
+HAVING count(*) > 1 AND "visitGlobalId" IS NOT NULL;
+
+/*
+DELETE FROM vpvisit WHERE "visitId" IN (
 	SELECT "visitId" FROM (
 		SELECT vpvisit."visitPoolId", vpvisit."visitId", "visitUserName" FROM vpvisit
 		JOIN (
@@ -18,6 +24,7 @@
 		WHERE "visitUserName" LIKE '%@%'
 	) AS delts --a named subquery behaves like a table
 );
+*/
 
 ALTER TABLE vpvisit DISABLE TRIGGER ALL;
 UPDATE vpvisit SET "visitWoodFrogAdults"=0 WHERE "visitWoodFrogAdults" IS NULL;
