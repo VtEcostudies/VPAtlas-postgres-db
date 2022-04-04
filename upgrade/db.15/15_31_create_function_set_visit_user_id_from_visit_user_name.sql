@@ -8,21 +8,21 @@ DECLARE
 	obs_id integer;
 BEGIN
 	--Handle visitUserName with username or email input
-	RAISE NOTICE 'set_visit_user_id_from_visit_user_name() userName:% | userId:%', NEW."visitUserName", NEW."visitUserId";
+	RAISE NOTICE 'set_visit_user_id_from_visit_user_name() visitUserName: % | visitUserId: %', NEW."visitUserName", NEW."visitUserId";
 	NEW."visitUserName" := btrim(NEW."visitUserName", '\"'); --trim dbl-quotes from input
 	NEW."visitUserId" := find_or_insert_user_from_ambig_user_email_input(NEW."visitUserName");
 	IF NEW."visitUserId" IS NOT NULL THEN -- don't display emails publicly if we found a user by incoming email
 		NEW."visitUserName" := SPLIT_PART(NEW."visitUserName", '@', 1);
-		RAISE NOTICE 'Found user. Trimmed email to username %.', NEW."visitUserName";
+		RAISE NOTICE 'Found user. Trimmed email to visitUserName %.', NEW."visitUserName";
 	END IF;
 
 	--Handle visitObserverUserName with username or email input
-	RAISE NOTICE 'set_visit_user_id_from_visit_user_name() visitObserverUserName:%', NEW."visitObserverUserName";
+	RAISE NOTICE 'set_visit_user_id_from_visit_user_name() visitObserverUserName: %', NEW."visitObserverUserName";
 	NEW."visitObserverUserName" := btrim(NEW."visitObserverUserName", '\"'); --trim dbl-quotes from input
 	obs_id := find_or_insert_user_from_ambig_user_email_input(NEW."visitObserverUserName");
 	IF obs_id IS NOT NULL THEN -- don't display emails publicly if we found a user by incoming email
 		NEW."visitObserverUserName" := SPLIT_PART(NEW."visitObserverUserName", '@', 1);
-		RAISE NOTICE 'Found user. Trimmed email to username %.', NEW."visitObserverUserName";
+		RAISE NOTICE 'Found observer. Trimmed email to visitOberverUserName %.', NEW."visitObserverUserName";
 	END IF;
 
 	RETURN NEW;
