@@ -38,7 +38,7 @@ BEGIN
 		INSERT INTO vpuser (
 			"username", "firstname", "lastname", "email", "hash", "userrole", "status"
 		) VALUES (
-			u_name, f_name, l_name, e_mail, '999999', 'user', "auto-gen"
+			u_name, f_name, l_name, e_mail, '999999', 'user', 'auto-gen'
 		) RETURNING id INTO u_id;
 		RAISE NOTICE 'INSERTED new user id % with username % and email %', u_id, u_name, e_mail;
 	END IF;
