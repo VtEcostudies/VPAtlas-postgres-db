@@ -6,7 +6,8 @@ ALTER TYPE confidence RENAME TO vp_pool_mapped_confidence_type;
 --DROP TYPE vp_pool_mapped_location_accuracy_type; --FAILED. Used in vpmapped column "mappedLocationAccuracy"
 --DROP TYPE vp_pool_mapped_confidence_type; --FAILED. Used in vpmapped column "mappedConfidence"
 
---Fix vpusers auto-gen users bug: merge users with same email having mixed case into single user
+--Find vpusers auto-gen users bug: merge users with same email having mixed case into single user
+/*
 SELECT DISTINCT(LOWER(vpuser.email)) AS email_lower,
 	(SELECT array_agg(id)
 		AS user_ids FROM vpuser WHERE LOWER(dupes.email)=LOWER(vpuser.email))
@@ -16,7 +17,9 @@ FROM vpuser JOIN (
 	GROUP BY LOWER(email)
 	HAVING count(*) > 1
 ) AS dupes ON LOWER(dupes.email)=LOWER(vpuser.email);
+*/
 
+--Fix vpusers auto-gen users bug: merge users with same email having mixed case into single user
 CREATE OR REPLACE FUNCTION vp_merge_duplicate_emails()
 	RETURNS integer
 	LANGUAGE 'plpgsql'
@@ -70,4 +73,4 @@ ALTER TABLE vpsurvey_amphib ENABLE TRIGGER ALL;
 END;
 $BODY$;
 
---select vp_merge_duplicate_emails();
+select vp_merge_duplicate_emails();
