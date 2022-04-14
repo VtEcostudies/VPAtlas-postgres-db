@@ -18,8 +18,10 @@ SELECT "maxSurveyId" FROM (
 	) AS maxdupes
 );
 
-ALTER TABLE vpsurvey DROP CONSTRAINT
+ALTER TABLE vpsurvey DROP CONSTRAINT IF EXISTS
 "vpsurvey_unique_survey_PoolId_TypeId_Date_GlobalId";
+ALTER TABLE vpsurvey DROP CONSTRAINT IF EXISTS
+"vpsurvey_unique_survey_PoolId_User_TypeId_Date_Time";
 ALTER TABLE vpsurvey ADD CONSTRAINT
 "vpsurvey_unique_survey_PoolId_User_TypeId_Date_Time"
 UNIQUE ("surveyPoolId", "surveyTypeId", "surveyUserEmail", "surveyDate", "surveyTime");
