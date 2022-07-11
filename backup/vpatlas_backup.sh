@@ -12,6 +12,6 @@ echo $filepath$filename
 sudo -u postgres pg_dump vpatlas -Fc > $filepath$fileback
 
 #copy backup to aws s3
-aws s3 rm s3://vpatlas.backup/$fileback
-aws s3 mv $filepath$fileback s3://vpatlas.backup/$fileback
-aws s3 cp s3://vpatlas.backup/$fileback s3://vpatlas.backup/$filename
+sudo aws s3 rm s3://vpatlas.backup/$fileback
+sudo aws s3 mv $filepath$fileback s3://vpatlas.backup/$fileback
+sudo aws s3 cp s3://vpatlas.backup/$fileback s3://vpatlas.backup/$filename
