@@ -30,4 +30,7 @@ they're found. Over time, this will 'heal' the database towards normalized data.
 
 Upgrade scripts are postgres executable files with leading numbers corresponding to a
 database version number found in db_upgrade.
+
+Symbolic links for software release versions point to numbered upgrade directories for that
+software release version. Just for clarity. Eg. db.v3 -> db.16.
 */
