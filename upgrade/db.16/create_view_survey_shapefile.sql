@@ -79,7 +79,7 @@ vpsurvey."surveyTypeId",
 "surveyAmphibJson"->'2'->>'surveyAmphibInteriorSPSA' AS "2InSPSA",
 "surveyAmphibJson"->'2'->>'surveyAmphibInteriorJESA' AS "2InJESA",
 "surveyAmphibJson"->'2'->>'surveyAmphibInteriorBLSA' AS "2InBLSA",
-"surveyAmphibJson",
+--"surveyAmphibJson", --this is needed for WHERE CLAUSE having these values, eg. hasIndicators. Leave off b/c email is in.
 
 "surveyMacroSurveyId",-- as macsvyid,
 "surveyMacroNorthFASH",-- as macnfash,
