@@ -133,10 +133,10 @@ vpvisit."updatedAt" AS "visitUpdatedAt",
 "visitSpeciesOtheriNat",
 "visitGlobalId",-- AS "globalId",
 "visitObjectId",-- AS "objectId",
-"visitDataUrl",-- AS "dataUrl"
+"visitDataUrl"-- AS "dataUrl"
 FROM vpvisit
 INNER JOIN vpmapped ON "visitPoolId"="mappedPoolId"
 LEFT JOIN vptown ON "mappedTownId"="townId"
 LEFT JOIN vpcounty ON "townCountyId"="govCountyId";
 
---select * from visit_shapefile;
+select * from visit_shapefile;
