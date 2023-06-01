@@ -17,18 +17,18 @@ CONCAT('https://vpatlas.org/survey/view/',"surveyId") AS "surveyUrl",
 
 "townName",
 "countyName",
+"username", --pgsql2shp requires explicit inclusion of field names for WHERE clause
 
 "surveyPoolId",
 vpsurvey."surveyTypeId",
 "surveyTypeName",
 "surveyUserId",
-"username",
 "surveyDate",
 "surveyTime",
-"surveyAcousticMonitor",-- AS acousmon,
-"surveyHoboLogger",-- AS hobologr,
-"surveyHoboData",-- AS hobodata,
-"surveyCustomLogger",-- AS custlogr,
+"surveyAcousticMonitor" AS acousmon,
+"surveyHoboLogger" AS hobologr,
+"surveyHoboData" AS hobodata,
+"surveyCustomLogger" AS custlogr,
 "surveyIceCover" AS icecover,
 "surveyWaterLevel" AS waterlvl,
 "surveySubmergedVeg" AS submgveg,
@@ -41,16 +41,16 @@ vpsurvey."surveyTypeId",
 "surveyHumidity" as humidity,
 "surveyWindBeaufort" as windbeau,
 "surveyWeatherConditions" as condtion,
-"surveyWeatherNotes" as wthrnote,
+"surveyWeatherNotes" as wthrnote, --NOTE: this could become a problem if it allows bad characters
 "surveySpermatophores" as sprmafor,
 "surveyAmphibMacroNotes" as fbmcnote, --NOTE: this could become a problem if it allows bad characters
 "surveyEdgeVisualImpairment" as ejvismpr,
 "surveyInteriorVisualImpairment" as ntvismpr,
-"surveyGlobalId",-- as globalid,
-"surveyObjectId",-- as objectid,
-"surveyDataUrl",-- as dataurl,
+"surveyGlobalId" as globalid,
+"surveyObjectId" as objectid,
+"surveyDataUrl" as dataurl,
 
-"surveyAmphibJson"->'1'->>'surveyAmphibObsEmail' AS "1ObsEmail",
+--"surveyAmphibJson"->'1'->>'surveyAmphibObsEmail' AS "1ObsEmail",
 "surveyAmphibJson"->'1'->>'surveyAmphibObsId' AS "1ObsId",
 "surveyAmphibJson"->'1'->>'surveyAmphibEdgeStart' AS "1EjStrt",
 "surveyAmphibJson"->'1'->>'surveyAmphibEdgeStop' AS "1EjStop",
@@ -65,7 +65,7 @@ vpsurvey."surveyTypeId",
 "surveyAmphibJson"->'1'->>'surveyAmphibInteriorJESA' AS "1InJESA",
 "surveyAmphibJson"->'1'->>'surveyAmphibInteriorBLSA' AS "1InBLSA",
 
-"surveyAmphibJson"->'2'->>'surveyAmphibObsEmail' AS "2ObsEmail",
+--"surveyAmphibJson"->'2'->>'surveyAmphibObsEmail' AS "2ObsEmail",
 "surveyAmphibJson"->'2'->>'surveyAmphibObsId' AS "2ObsId",
 "surveyAmphibJson"->'2'->>'surveyAmphibEdgeStart' AS "2EjStrt",
 "surveyAmphibJson"->'2'->>'surveyAmphibEdgeStop' AS "2EjStop",
@@ -81,17 +81,17 @@ vpsurvey."surveyTypeId",
 "surveyAmphibJson"->'2'->>'surveyAmphibInteriorBLSA' AS "2InBLSA",
 --"surveyAmphibJson", --this is needed for WHERE CLAUSE having these values, eg. hasIndicators. Leave off b/c email is in.
 
-"surveyMacroSurveyId",-- as macsvyid,
-"surveyMacroNorthFASH",-- as macnfash,
-"surveyMacroEastFASH",-- as macefash,
-"surveyMacroSouthFASH",-- as macsfash,
-"surveyMacroWestFASH",-- as macwfash,
-"surveyMacroTotalFASH",-- as mactfash,
-"surveyMacroNorthCDFY",-- as macncdfy,
-"surveyMacroEastCDFY",-- as macecdfy,
-"surveyMacroSouthCDFY",-- as macscdfy,
-"surveyMacroWestCDFY",-- as macwcdfy,
-"surveyMacroTotalCDFY",-- as mactcdfy,
+"surveyMacroSurveyId" as macsvyid,
+"surveyMacroNorthFASH" as macnfash,
+"surveyMacroEastFASH" as macefash,
+"surveyMacroSouthFASH" as macsfash,
+"surveyMacroWestFASH" as macwfash,
+"surveyMacroTotalFASH" as mactfash,
+"surveyMacroNorthCDFY" as macncdfy,
+"surveyMacroEastCDFY" as macecdfy,
+"surveyMacroSouthCDFY" as macscdfy,
+"surveyMacroWestCDFY" as macwcdfy,
+"surveyMacroTotalCDFY" as mactcdfy,
 
 "surveyYear"
 FROM vpsurvey
@@ -99,8 +99,10 @@ INNER JOIN vpmapped ON "mappedPoolId"="surveyPoolId"
 INNER JOIN vpsurvey_macro ON "surveyMacroSurveyId"="surveyId"
 INNER JOIN vpsurvey_year ON "surveyYearSurveyId"="surveyId"
 INNER JOIN def_survey_type ON def_survey_type."surveyTypeId"=vpsurvey."surveyTypeId"
-LEFT JOIN vpuser ON "surveyUserEmail"="email"
 LEFT JOIN vptown ON "mappedTownId"="townId"
-LEFT JOIN vpcounty ON "townCountyId"="govCountyId";
+LEFT JOIN vpcounty ON "townCountyId"="govCountyId"
+LEFT JOIN vpuser ON "surveyUserEmail"="email"
+--LEFT JOIN vpuser ON "surveyUserId"=id
+;
 
 --select * from survey_shapefile;

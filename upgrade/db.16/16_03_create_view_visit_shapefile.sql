@@ -11,11 +11,12 @@ SELECT
 "mappedPoolId" AS "poolId",
 "mappedPoolStatus" AS "poolStatus",
 "mappedPoolLocation" AS "poolLocation",
-"mappedPoolStatus", --
+"mappedPoolStatus",
 CONCAT('https://vpatlas.org/pools/list?poolId=',"mappedPoolId",'&zoomFilter=false') AS "poolUrl",
 CONCAT('https://vpatlas.org/visit/view/',"visitId") AS "visitUrl",
 "townName",
 "countyName",
+"username", --pgsql2shp requires explicit inclusion of field names for WHERE clause
 "visitId",
 "visitUserName",
 "visitUserId",
@@ -137,6 +138,8 @@ vpvisit."updatedAt" AS "visitUpdatedAt",
 FROM vpvisit
 INNER JOIN vpmapped ON "visitPoolId"="mappedPoolId"
 LEFT JOIN vptown ON "mappedTownId"="townId"
-LEFT JOIN vpcounty ON "townCountyId"="govCountyId";
+LEFT JOIN vpcounty ON "townCountyId"="govCountyId"
+LEFT JOIN vpuser ON "visitUserId"=id
+;
 
 select * from visit_shapefile;
