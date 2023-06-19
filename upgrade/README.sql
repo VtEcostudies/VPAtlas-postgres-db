@@ -18,7 +18,7 @@ problem, again with eg. users, is the UX does not enforce the selection of valid
 users since this was undesirable.
 
 Further, with the addition of VPMon which identifies 'Observers' by name, we introduced more
-non-normalized user data, among other isseus like equipment types and statuses, etc.
+non-normalized user data, among other issues like equipment types and statuses, etc.
 
 We invented an ad-hoc solution to this problem: for each non-normal data element, create 2
 columns: the raw value, and its foreign Key. The FK references a foreign table but is not
