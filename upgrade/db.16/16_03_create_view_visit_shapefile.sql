@@ -134,12 +134,26 @@ vpvisit."updatedAt" AS "visitUpdatedAt",
 "visitSpeciesOtheriNat",
 "visitGlobalId",-- AS "globalId",
 "visitObjectId",-- AS "objectId",
-"visitDataUrl"-- AS "dataUrl"
+"visitDataUrl",-- AS "dataUrl"
+"reviewId",
+"reviewUserName",
+"reviewUserId",
+"reviewPoolId",
+"reviewVisitIdLegacy",
+"reviewVisitId",
+"reviewQACode",
+--"reviewQAAlt",
+"reviewQAPerson",
+"reviewQADate",
+"reviewQANotes",
+"reviewPoolStatus",
+"reviewPoolLocator"
 FROM vpvisit
 INNER JOIN vpmapped ON "visitPoolId"="mappedPoolId"
 LEFT JOIN vptown ON "mappedTownId"="townId"
 LEFT JOIN vpcounty ON "townCountyId"="govCountyId"
 LEFT JOIN vpuser ON "visitUserId"=id
+LEFT JOIN vpreview ON "visitId" = "reviewVisitId"
 ;
 
-select * from visit_shapefile;
+--select * from visit_shapefile;
