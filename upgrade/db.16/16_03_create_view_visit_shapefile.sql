@@ -145,7 +145,7 @@ vpvisit."updatedAt" AS "visitUpdatedAt",
 --"reviewQAAlt",
 "reviewQAPerson",
 "reviewQADate",
-"reviewQANotes",
+--"reviewQANotes",
 "reviewPoolStatus",
 "reviewPoolLocator"
 FROM vpvisit
